@@ -7,26 +7,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@master
+      - uses: actions/checkout@master
 
-    - name: Use Node.js 12.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12.x
+      - name: Install node@12
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
 
-    - name: Composer Action
-      uses: MilesChou/composer-action@v0.0.1
+      - name: Install yarn
+        uses: comchangs/action-yarn@v0.1-beta
 
-    - name: Composer install
-      run: composer install
-      
-    - name: action-yarn
-      uses: comchangs/action-yarn@v0.1-beta
-      
-    - name: npm install, build and test
-      run: |
-        yarn install
-        yarn run production
-        
-    - name: Run PHPUnit
-      run: php7.3 vendor/bin/phpunit
+      - name: yarn install, build and test
+        run: |
+          yarn
+          yarn run dev
+
+      - name: Install and run composer
+        uses: nick-zh/composer-php@master
+        with:
+          action: "install"
+
+      - name: Setup environment variables
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Setup sqlite
+        run: touch database/database.sqlite
+
+      - name: Migrate and seed database
+        run: |
+          php artisan migrate
+          php artisan db:seed
+
+      - name: Run PHPUnit
+        run: php7.3 vendor/bin/phpunit
