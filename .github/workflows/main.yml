@@ -22,10 +22,11 @@ jobs:
           yarn
           yarn run dev
 
-      - name: Install and run composer
+      - name: Run composer
         uses: nick-zh/composer-php@master
         with:
-          action: "install"
+          action: "update"
+          options: "-o"
 
       - name: Setup environment variables
         run: |
