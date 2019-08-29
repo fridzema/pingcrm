@@ -1,0 +1,32 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+
+    - name: Composer Action
+      uses: MilesChou/composer-action@v0.0.1
+
+    - name: Composer install
+      run: composer install
+      
+    - name: action-yarn
+      uses: comchangs/action-yarn@v0.1-beta
+      
+    - name: npm install, build and test
+      run: |
+        yarn install
+        yarn run production
+        
+    - name: Run PHPUnit
+      run: php7.3 vendor/bin/phpunit
